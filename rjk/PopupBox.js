@@ -37,44 +37,50 @@ define([
             else if (typeof(opts) === "string")
                 opts = { node: opts };
 
-            this._getIcon();
-            this._getNode(opts.node);
+            this._getIconNode(opts.iconNode);
+            this._getPopupNode(opts.node);
             this._setEvents();
             this.resetPosition();
         },
 
-        _getIcon() {
-            var size = this.iconSize * 2;
-            this.iconNode = constr.create("div", {
-                style: {
+        _getIconNode(node) {
+            this.iconNode = this._getNode(node);
+
+            if (this.iconNode) {
+                style.set(this.iconNode, {
                     position: "absolute",
-                    width: size + "px",
-                    left: window.innerWidth - size - this.margin + "px",
-                    top: window.innerHeight - size - this.margin + "px",
-                    'border-radius': this.iconSize + "px",
-                    background: this.iconColor
-                }
-            }, win.body(), "first");
+                    width: this.iconSize * 2 + "px",
+                    height: 0,
+                    'z-index': 998
+                });
+            } else {
+                var size = this.iconSize * 2;
+                this.iconNode = constr.create("div", {
+                    style: {
+                        position: "absolute",
+                        width: size + "px",
+                        right: this.margin + "px",
+                        bottom: this.margin + "px",
+                        'border-radius': this.iconSize + "px",
+                        background: this.iconColor,
+                        'z-index': 998
+                    }
+                }, win.body(), "first");
+            }
 
             on(this.iconNode, mouse.enter, lang.hitch(this, function () {
                 this.show();
             }));
         },
 
-        _getNode(node) {
-            if (node !== null)
-                if (typeof(node) === "string") {
-                    this.node = dom.byId(node);
-                    if (! this.node)
-                        console.error("Node id " + node + " not found.");
-                } else if (typeof(node) === "object")
-                    this.node = node;
+        _getPopupNode(node) {
+            this.node = this._getNode(node);
 
             if (this.node) {
-                this.resetPosition();
                 style.set(this.node, {
                     position: "absolute",
                     width: this.width + "px",
+                    height: 0,
                     'z-index': 999
                 });
             } else {
@@ -90,6 +96,18 @@ define([
             }
         },
 
+        _getNode(node) {
+            var n;
+            if (node !== null)
+                if (typeof(node) === "string")
+                    if (! (n = dom.byId(node)))
+                        console.error("Node id " + node + " not found.");
+                else if (typeof(node) === "object")
+                    n = node;
+
+            return n;
+        },
+
         _setEvents: function () {
             on(window, "resize", lang.hitch(this, function(e) {
                 this.resetPosition();
@@ -103,13 +121,14 @@ define([
         },
 
         resetPosition: function () {
-            var g = this.geom = geom.position(this.node);
-            g.x = -this.margin + window.innerWidth - g.w;
-            g.y = window.innerHeight;
-
             style.set(this.node, {
-                left: g.x + "px",
-                top: g.y + "px"
+                height: 0,
+                right: this.margin + "px",
+                bottom: 0
+            });
+            style.set(this.iconNode, {
+                right: this.margin + "px",
+                bottom: this.margin + "px",
             });
         },
 
@@ -148,7 +167,7 @@ define([
                 node: this.node,
                 properties: {
                     height: this.height,
-                    top: window.innerHeight - this.height,
+                    bottom: 0,
                     opacity: 100
                 },
                 duration: this.showDuration
@@ -160,7 +179,7 @@ define([
                 node: this.node,
                 properties: {
                     height: 0,
-                    top: window.innerHeight,
+                    bottom: 0,
                     opacity: 0
                 },
                 duration: this.hideDuration
