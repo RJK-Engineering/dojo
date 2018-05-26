@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Widget Example</title>
+</head>
+<body class="claro">
+    <div data-dojo-type="rjk.MyWidgetDecl"></div>
+
+    <script src="dojo/dojo.js" data-dojo-config="async: true"></script>
+    <script>
+      require([
+          "dojo/parser",
+          "dojo/ready",
+          "dojo/dom",
+          "dijit/registry",
+          "rjk/MyWidgetDecl"
+      ], function (parser, ready, dom, registry) {
+          ready(function(){
+              parser.parse();
+              var node = dom.byId("rjk_MyWidgetDecl_0");
+              console.log(node);
+              var widget = registry.byId("rjk_MyWidgetDecl_0");
+              widget.hi();
+          });
+      });
+  </script>
+
+</body>
+</html>
