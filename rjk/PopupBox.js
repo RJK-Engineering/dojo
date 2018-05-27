@@ -78,7 +78,6 @@ define([
             });
             constr.place(this.domNode, win.body(), "first");
 
-            // on(this.domNode, mouse.enter, lang.hitch(this, "show"));
             on(this.domNode, mouse.leave, lang.hitch(this, "hide"));
         },
 
@@ -91,10 +90,10 @@ define([
                     node: node,
                     properties: { height: 0 },
                     duration: this.hideMessageDuration,
-                    onEnd: lang.hitch(node, function () {
-                        if (this.parentNode) // can be null on fast clicking
-                            this.parentNode.removeChild(this);
-                    })
+                    onEnd: function () {
+                        if (node.parentNode) // can be null on fast clicking
+                            node.parentNode.removeChild(node);
+                    }
                 }).play();
 
                 this.messages--;
@@ -113,7 +112,6 @@ define([
                 node: this.domNode,
                 properties: {
                     height: this.height,
-                    bottom: 0,
                     opacity: 1
                 },
                 duration: this.showDuration
@@ -130,8 +128,7 @@ define([
                 node: this.domNode,
                 properties: {
                     height: 0,
-                    bottom: 0,
-                    opacity: 1
+                    opacity: 0
                 },
                 duration: this.hideDuration
             }).play();
