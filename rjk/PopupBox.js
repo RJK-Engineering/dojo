@@ -71,7 +71,7 @@ define([
             style.set(this.domNode, {
                 position: "absolute",
                 overflow: "hidden",
-                width: this.width + 'px',
+                width: this.width + "px",
                 right: this.margin + "px",
                 bottom: 0,
                 opacity: 0,
