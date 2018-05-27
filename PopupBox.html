@@ -31,13 +31,13 @@
           ready(function(){
               console.log(box);
               box.set('timeout', 2000);
-              box.alert(box);
+              box.message(box);
               box.set('timeout', 1000);
 
               var input = dom.byId("message");
               on(input, "keyup", function(e) {
                   if (e.keyCode == 13) {
-                      box.alert(input.value);
+                      box.message(input.value);
                   }
               });
 

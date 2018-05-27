@@ -17,7 +17,7 @@ define([
         timeout: 5000,
         showDuration: 500,
         hideDuration: 200,
-        hideAlertDuration: 200,
+        hideMessageDuration: 200,
 
         width: 400,
         height: 200,
@@ -27,21 +27,21 @@ define([
         iconSize: 20,
         iconColor: "#73ad21",
 
-        alertContainerNode: null,
+        messageContainerNode: null,
         iconNode: null,
-        timer: null,
-        alerts: 0,
+        hideTimer: null,
+        messages: 0,
 
-        templateString: "<div></div>",
+        templateString: '<div><div class="rjk_PopupBox_messageContainer"></div></div>',
 
         buildRendering: function(){
             this.inherited(arguments);
 
-            this._getIconNode();
-            this._getPopupNode();
+            this._setupIconNode();
+            this._setupPopupNode();
         },
 
-        _getIconNode(node) {
+        _setupIconNode() {
             var size = this.iconSize * 2;
             this.iconNode = constr.create("div", {
                 style: {
@@ -60,14 +60,7 @@ define([
             on(this.iconNode, mouse.enter, lang.hitch(this, "show"));
         },
 
-        _getPopupNode: function(node) {
-            this.alertContainerNode = constr.create("div", {
-                style: {
-                    border: this.border,
-                    height: "100%"
-                }
-            });
-            constr.place(this.alertContainerNode, this.domNode);
+        _setupPopupNode: function() {
             style.set(this.domNode, {
                 position: "absolute",
                 overflow: "hidden",
@@ -78,32 +71,37 @@ define([
                 'background-color': this.backgroundColor,
                 'z-index': 999
             });
+            this.messageContainerNode = this.domNode.children[0];
+            style.set(this.messageContainerNode, {
+                border: this.border,
+                height: "100%"
+            });
             constr.place(this.domNode, win.body(), "first");
 
             // on(this.domNode, mouse.enter, lang.hitch(this, "show"));
             on(this.domNode, mouse.leave, lang.hitch(this, "hide"));
         },
 
-        alert: function (text) {
-            var node = constr.toDom('<div style="overflow: hidden">' + text + "<hr></div>");
-            constr.place(node, this.alertContainerNode, "first");
+        message: function (text) {
+            var node = constr.toDom('<div class="rjk_PopupBox_message" style="overflow: hidden">' + text + "<hr></div>");
+            constr.place(node, this.messageContainerNode, "first");
 
             on(node, "click", lang.hitch(this, function (e) {
                 bfx.animateProperty({
                     node: node,
                     properties: { height: 0 },
-                    duration: this.hideAlertDuration,
+                    duration: this.hideMessageDuration,
                     onEnd: lang.hitch(node, function () {
                         if (this.parentNode) // can be null on fast clicking
                             this.parentNode.removeChild(this);
                     })
                 }).play();
 
-                this.alerts--;
+                this.messages--;
                 this.refeshIcon();
              }));
 
-            this.alerts++;
+            this.messages++;
             this.refeshIcon();
             this.show(this.timeout);
         },
@@ -141,7 +139,7 @@ define([
 
         refeshIcon() {
             style.set(this.iconNode, {
-                display: this.alerts ? "inline-block" : "none"
+                display: this.messages ? "inline-block" : "none"
             });
         }
     });
