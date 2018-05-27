@@ -94,7 +94,8 @@ define([
                     properties: { height: 0 },
                     duration: this.hideAlertDuration,
                     onEnd: lang.hitch(node, function () {
-                        this.parentNode.removeChild(this);
+                        if (this.parentNode) // can be null on fast clicking
+                            this.parentNode.removeChild(this);
                     })
                 }).play();
 
