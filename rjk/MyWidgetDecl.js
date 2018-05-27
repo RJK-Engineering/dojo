@@ -1,8 +1,7 @@
 define([
     "dojo/_base/declare",
-    "dojo/parser",
     "dijit/_WidgetBase"
-], function (declare, parser, _WidgetBase) {
+], function (declare, _WidgetBase) {
 
     declare("rjk.MyWidgetDecl", [_WidgetBase], {
 
