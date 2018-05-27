@@ -1,16 +1,19 @@
 define([
     "dojo/_base/declare",
+    "dijit/_WidgetBase",
+    "dijit/_TemplatedMixin",
+
     "dojo/_base/fx",
     "dojo/_base/lang",
     "dojo/_base/window",
-    "dojo/dom",
     "dojo/dom-construct",
-    "dojo/dom-geometry",
     "dojo/dom-style",
     "dojo/mouse",
-    "dojo/on",
-], function (declare, bfx, lang, win, dom, constr, geom, style, mouse, on) {
-    return declare("rjk.PopupBox", [], {
+    "dojo/on"
+], function (declare, _WidgetBase, _TemplatedMixin,
+    bfx, lang, win, constr, style, mouse, on) {
+
+    declare("rjk.PopupBox", [_WidgetBase, _TemplatedMixin], {
         timeout: 5000,
         showDuration: 500,
         hideDuration: 200,
@@ -24,117 +27,66 @@ define([
         iconSize: 20,
         iconColor: "#73ad21",
 
-        node: null,
+        alertContainerNode: null,
         iconNode: null,
-        geom: null,
         timer: null,
         alerts: 0,
 
-        constructor: function (opts) {
-            lang.mixin(this, opts);
-            if (! opts)
-                opts = {};
-            else if (typeof(opts) === "string")
-                opts = { node: opts };
+        templateString: "<div></div>",
 
-            this._getIconNode(opts.iconNode);
-            this._getPopupNode(opts.node);
-            this._setEvents();
-            this.resetPosition();
+        buildRendering: function(){
+            this.inherited(arguments);
+
+            this._getIconNode();
+            this._getPopupNode();
         },
 
         _getIconNode(node) {
-            this.iconNode = this._getNode(node);
-
-            if (this.iconNode) {
-                style.set(this.iconNode, {
+            var size = this.iconSize * 2;
+            this.iconNode = constr.create("div", {
+                style: {
+                    display: "none",
                     position: "absolute",
-                    width: this.iconSize * 2 + "px",
-                    height: 0,
+                    width: size + "px",
+                    height: size + "px",
+                    right: this.margin + "px",
+                    bottom: this.margin + "px",
+                    'border-radius': this.iconSize + "px",
+                    background: this.iconColor,
                     'z-index': 998
-                });
-            } else {
-                var size = this.iconSize * 2;
-                this.iconNode = constr.create("div", {
-                    style: {
-                        position: "absolute",
-                        width: size + "px",
-                        right: this.margin + "px",
-                        bottom: this.margin + "px",
-                        'border-radius': this.iconSize + "px",
-                        background: this.iconColor,
-                        'z-index': 998
-                    }
-                }, win.body(), "first");
-            }
+                }
+            }, win.body(), "first");
 
-            on(this.iconNode, mouse.enter, lang.hitch(this, function () {
-                this.show();
-            }));
+            on(this.iconNode, mouse.enter, lang.hitch(this, "show"));
         },
 
-        _getPopupNode(node) {
-            this.node = this._getNode(node);
-
-            if (this.node) {
-                style.set(this.node, {
-                    position: "absolute",
-                    width: this.width + "px",
-                    height: 0,
-                    'z-index': 999
-                });
-            } else {
-                var attrs = {};
-                attrs.style = {
-                    position: "absolute",
-                    width: this.width + 'px',
+        _getPopupNode: function(node) {
+            this.alertContainerNode = constr.create("div", {
+                style: {
                     border: this.border,
-                    'background-color': this.backgroundColor,
-                    'z-index': 999
-                };
-                this.node = constr.create("div", attrs, win.body(), "first");
-            }
-        },
-
-        _getNode(node) {
-            var n;
-            if (node !== null)
-                if (typeof(node) === "string")
-                    if (! (n = dom.byId(node)))
-                        console.error("Node id " + node + " not found.");
-                else if (typeof(node) === "object")
-                    n = node;
-
-            return n;
-        },
-
-        _setEvents: function () {
-            on(window, "resize", lang.hitch(this, function(e) {
-                this.resetPosition();
-            }));
-            on(this.node, mouse.enter, lang.hitch(this, function (argument) {
-                clearTimeout(this.timer);
-            }));
-            on(this.node, mouse.leave, lang.hitch(this, function (argument) {
-                this.hide();
-            }));
-        },
-
-        resetPosition: function () {
-            style.set(this.node, {
-                height: 0,
-                right: this.margin + "px",
-                bottom: 0
+                    height: "100%"
+                }
             });
-            style.set(this.iconNode, {
+            constr.place(this.alertContainerNode, this.domNode);
+            style.set(this.domNode, {
+                position: "absolute",
+                overflow: "hidden",
+                width: this.width + 'px',
                 right: this.margin + "px",
-                bottom: this.margin + "px",
+                bottom: 0,
+                opacity: 0,
+                'background-color': this.backgroundColor,
+                'z-index': 999
             });
+            constr.place(this.domNode, win.body(), "first");
+
+            // on(this.domNode, mouse.enter, lang.hitch(this, "show"));
+            on(this.domNode, mouse.leave, lang.hitch(this, "hide"));
         },
 
         alert: function (text) {
             var node = constr.toDom('<div style="overflow: hidden">' + text + "<hr></div>");
-            constr.place(node, this.node, "first");
+            constr.place(node, this.alertContainerNode, "first");
 
             on(node, "click", lang.hitch(this, function (e) {
                 bfx.animateProperty({
@@ -152,35 +104,35 @@ define([
 
             this.alerts++;
             this.refeshIcon();
-            this.show();
-
-            this.timer = setTimeout(lang.hitch(this, function () {
-                this.hide();
-            }), this.timeout + this.showDuration);
+            this.show(this.timeout);
         },
 
-        show: function () {
-            clearTimeout(this.timer);
-            this.resetPosition();
+        show: function (timeout) {
+            clearTimeout(this.hideTimer);
 
             bfx.animateProperty({
-                node: this.node,
+                node: this.domNode,
                 properties: {
                     height: this.height,
                     bottom: 0,
-                    opacity: 100
+                    opacity: 1
                 },
                 duration: this.showDuration
             }).play();
+
+            if (timeout != null)
+                this.hideTimer = setTimeout(lang.hitch(this, function () {
+                    this.hide();
+                }), timeout + this.showDuration);
         },
 
         hide: function () {
             bfx.animateProperty({
-                node: this.node,
+                node: this.domNode,
                 properties: {
                     height: 0,
                     bottom: 0,
-                    opacity: 0
+                    opacity: 1
                 },
                 duration: this.hideDuration
             }).play();
@@ -188,7 +140,7 @@ define([
 
         refeshIcon() {
             style.set(this.iconNode, {
-                height: (this.alerts ? this.iconSize * 2 : 0) + "px"
+                display: this.alerts ? "inline-block" : "none"
             });
         }
     });

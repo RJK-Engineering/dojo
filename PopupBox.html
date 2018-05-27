@@ -3,38 +3,45 @@
 <head>
   <meta charset="utf-8">
   <title>PopupBox Example</title>
-  <!-- <link rel="stylesheet" href="dijit/themes/claro/claro.css" /> -->
 </head>
-<body class="claro" style="overflow: hidden">
-    <!-- <div id="popupBox"></div> -->
+<body>
     <!-- <input id="message" type="text" name="message" data-dojo-type="dijit/form/TextBox" /> -->
     <input id="message" type="text" name="message" />
 
     <script src="dojo/dojo.js" data-dojo-config="async: true"></script>
     <script>
       require([
-          'dojo/dom',
-          'dojo/on',
-          'rjk/PopupBox',
-          'dojo/domReady!'
-      ], function (dom, on, PopupBox) {
-          var mm = new PopupBox({
-              // node: 'popupBox',
-              timeout: 5000,
-              showDuration: 500,
-              hideDuration: 200,
-              hideAlertDuration: 200,
-              width: 400,
-              height: 200,
-              border: '1px solid black',
-              iconSize: 20
-          });
+          "dojo/ready",
+          "dojo/dom",
+          "dijit/registry",
+          "dojo/on",
 
-          var input = dom.byId("message");
-          on(input, "keyup", function(e) {
-              if (e.keyCode == 13) {
-                  mm.alert(input.value);
-              }
+          "rjk/PopupBox"
+      ], function (ready, dom, registry, on) {
+          var box = new rjk.PopupBox({
+              // timeout: 500,
+              // showDuration: 2000,
+              // hideDuration: 2000,
+              // hideAlertDuration: 200,
+              // width: 400,
+              // height: 200,
+              // border: "1px solid black",
+              // iconSize: 20
+          });
+          ready(function(){
+              console.log(box);
+              box.set('timeout', 2000);
+              box.alert(box);
+              box.set('timeout', 1000);
+
+              var input = dom.byId("message");
+              on(input, "keyup", function(e) {
+                  if (e.keyCode == 13) {
+                      box.alert(input.value);
+                  }
+              });
+
+              console.log(box.get('timeout'));
           });
       });
   </script>
