@@ -25,14 +25,21 @@ define([
 
             loaded.getChildren = function(object) {
                 console.log(this.getIdentity(object));
-                return this.query({parent: this.getIdentity(object)});
+                var children = this.query({parent: this.getIdentity(object)});
+                // if (! children.length) {
+                //     children = store.getChildren(object);
+                //     array.forEach(children, function (child) {
+                //         loaded.put(child);
+                //     });
+                // }
+                return children;
             };
-            aspect.around(loaded, "put", function(originalPut){
+            aspect.around(loaded, "put", function(original){
                 return function (obj, options) {
                     if (options && options.parent) {
                         obj.parent = options.parent.id;
                     }
-                    return originalPut.call(loaded, obj, options);
+                    return original.call(loaded, obj, options);
                 }
             });
 
@@ -47,12 +54,17 @@ define([
                 model: model,
                 dndController: dndSource
             });
-            on(this.tree, "click", function (item, node) {
-                array.forEach(store.getChildren(item), function (child) {
-                    if (! loaded.get(loaded.getIdentity(child)))
-                        loaded.put(child);
-                });
-            });
+            // var l = on(this.tree, "getChildren", function (item, node) {
+            //     // console.log("sdf");
+            //     console.log(item, node);
+            //     // window.th = this;
+            //     array.forEach(store.getChildren(item), function (child) {
+            //         // // TODO remove click event instead of loaded check
+            //         if (! loaded.get(loaded.getIdentity(child)))
+            //             loaded.put(child);
+            //     });
+            //     // l.remove();
+            // });
         },
 
         placeAt: function (node) {
