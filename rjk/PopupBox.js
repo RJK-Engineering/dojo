@@ -2,6 +2,7 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dojo/store/Memory",
     "dojo/store/Observable",
 
     "dojo/_base/array",
@@ -12,9 +13,10 @@ define([
     "dojo/dom-construct",
     "dojo/dom-style",
     "dojo/mouse",
-    "dojo/on"
-], function (declare, _WidgetBase, _TemplatedMixin, Observable,
-    array, bfx, lang, win, attr, constr, style, mouse, on) {
+    "dojo/on",
+    "dojo/when"
+], function (declare, _WidgetBase, _TemplatedMixin, Memory, Observable,
+    array, bfx, lang, win, attr, constr, style, mouse, on, when) {
 
     declare("rjk.PopupBox", [_WidgetBase, _TemplatedMixin], {
         timeout: 5000,
@@ -45,6 +47,8 @@ define([
         },
 
         postCreate: function() {
+            if (! this.store)
+                this.store = new Memory();
             this.store = new Observable(this.store);
             this.store.query().observe(
                 lang.hitch(this, function (message, removedFrom, insertedInto) {
@@ -58,7 +62,7 @@ define([
         },
 
         loadMessages: function() {
-            this.store.query().then(lang.hitch(this, function(list){
+            when(this.store.query(), lang.hitch(this, function(list){
                 array.forEach(list, lang.hitch(this, function (message) {
                     this.addMessage(message);
                 }))

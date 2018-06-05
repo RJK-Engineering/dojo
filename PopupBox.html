@@ -15,14 +15,10 @@
           "dojo/dom",
           "dijit/registry",
           "dojo/on",
-          "dojo/store/JsonRest",
           "rjk/PopupBox"
-      ], function (ready, dom, registry, on, JsonRest) {
+      ], function (ready, dom, registry, on) {
           var box = new rjk.PopupBox({
-              store: new JsonRest({
-                  target: "/RSApi/api/messages"
-                  // target: "http://localhost:8080/RSApi/api/messages"
-              })
+              // store: new JsonRest({ target: "/api/messages" })
               // timeout: 500,
               // showDuration: 2000,
               // hideDuration: 2000,
