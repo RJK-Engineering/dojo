@@ -15,10 +15,14 @@
           "dojo/dom",
           "dijit/registry",
           "dojo/on",
-
+          "dojo/store/JsonRest",
           "rjk/PopupBox"
-      ], function (ready, dom, registry, on) {
+      ], function (ready, dom, registry, on, JsonRest) {
           var box = new rjk.PopupBox({
+              store: new JsonRest({
+                  target: "/RSApi/api/messages"
+                  // target: "http://localhost:8080/RSApi/api/messages"
+              })
               // timeout: 500,
               // showDuration: 2000,
               // hideDuration: 2000,
@@ -29,10 +33,10 @@
               // iconSize: 20
           });
           ready(function(){
-              console.log(box);
+              // console.log(box);
               box.set('timeout', 2000);
-              box.message(box);
-              box.set('timeout', 1000);
+              // console.log(box.get('timeout'));
+              // box.message(window.location.toString());
 
               var input = dom.byId("message");
               on(input, "keyup", function(e) {
@@ -40,8 +44,6 @@
                       box.message(input.value);
                   }
               });
-
-              console.log(box.get('timeout'));
           });
       });
   </script>

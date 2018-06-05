@@ -2,16 +2,19 @@ define([
     "dojo/_base/declare",
     "dijit/_WidgetBase",
     "dijit/_TemplatedMixin",
+    "dojo/store/Observable",
 
+    "dojo/_base/array",
     "dojo/_base/fx",
     "dojo/_base/lang",
     "dojo/_base/window",
+    "dojo/dom-attr",
     "dojo/dom-construct",
     "dojo/dom-style",
     "dojo/mouse",
     "dojo/on"
-], function (declare, _WidgetBase, _TemplatedMixin,
-    bfx, lang, win, constr, style, mouse, on) {
+], function (declare, _WidgetBase, _TemplatedMixin, Observable,
+    array, bfx, lang, win, attr, constr, style, mouse, on) {
 
     declare("rjk.PopupBox", [_WidgetBase, _TemplatedMixin], {
         timeout: 5000,
@@ -27,18 +30,40 @@ define([
         iconSize: 20,
         iconColor: "#73ad21",
 
+        store: null,
         messageContainerNode: null,
         iconNode: null,
         hideTimer: null,
-        messages: 0,
 
         templateString: '<div><div class="rjk_PopupBox_messageContainer"></div></div>',
 
+
         buildRendering: function(){
             this.inherited(arguments);
-
             this._setupIconNode();
             this._setupPopupNode();
+        },
+
+        postCreate: function() {
+            this.store = new Observable(this.store);
+            this.store.query().observe(
+                lang.hitch(this, function (message, removedFrom, insertedInto) {
+                    if (removedFrom == -1)
+                        this.addMessage(message);
+                })
+            );
+            window.store = this.store;
+
+            this.loadMessages();
+        },
+
+        loadMessages: function() {
+            this.store.query().then(lang.hitch(this, function(list){
+                array.forEach(list, lang.hitch(this, function (message) {
+                    this.addMessage(message);
+                }))
+            }));
+            this.refeshIcon();
         },
 
         _setupIconNode() {
@@ -82,25 +107,34 @@ define([
         },
 
         message: function (text) {
-            var node = constr.toDom('<div class="rjk_PopupBox_message" style="overflow: hidden">' + text + "<hr></div>");
+            this.store.put(
+                { "text":text }
+            );
+        },
+
+        addMessage: function (message) {
+            var node = constr.toDom(
+                '<div class="rjk_PopupBox_message" style="overflow: hidden">' +
+                message.text + "<hr></div>"
+            );
+            attr.set(node, 'data-id', message.id);
             constr.place(node, this.messageContainerNode, "first");
 
             on(node, "click", lang.hitch(this, function (e) {
                 bfx.animateProperty({
                     node: node,
-                    properties: { height: 0 },
+                    postMixInProperties: { height: 0 },
                     duration: this.hideMessageDuration,
-                    onEnd: function () {
-                        if (node.parentNode) // can be null on fast clicking
+                    onEnd: lang.hitch(this, function () {
+                        if (node.parentNode) { // can be null on fast clicking
                             node.parentNode.removeChild(node);
-                    }
+                            this.store.remove(attr.get(node, 'data-id'));
+                            this.refeshIcon();
+                        }
+                    })
                 }).play();
+            }));
 
-                this.messages--;
-                this.refeshIcon();
-             }));
-
-            this.messages++;
             this.refeshIcon();
             this.show(this.timeout);
         },
@@ -136,7 +170,7 @@ define([
 
         refeshIcon() {
             style.set(this.iconNode, {
-                display: this.messages ? "inline-block" : "none"
+                display: this.messageContainerNode.children.length == 0 ? "none" : "inline-block"
             });
         }
     });
