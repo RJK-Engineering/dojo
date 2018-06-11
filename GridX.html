@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>GridX Example</title>
+  <link rel="stylesheet" href="dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="gridx/resources/claro/Gridx.css" />
+</head>
+<body class="claro">
+
+  <div id="gridNode" style="width: 400px; height: 300px;"></div>
+  <!-- <div id="gridNode" style="width: 100%; height: 100%;"></div> -->
+
+  <script src="dojo/dojo.js" data-dojo-config="async: true"></script>
+  <script>
+    require([
+        'dojo/store/Memory',
+        'gridx/Grid',
+        'gridx/core/model/cache/Sync',
+        'gridx/modules/SingleSort',
+        'gridx/modules/ColumnResizer',
+        'gridx/modules/Filter',
+        'gridx/modules/filter/FilterBar',
+        "dojo/domReady!"
+    ], function(Store, Grid, Cache, Sort, ColumnResizer, Filter, FilterBar){
+        var store = new Store({
+            data: [
+                { id: 1, title: 'Hey There', artist: 'Bette Midler' },
+                { id: 2, title: 'Love or Confusion', artist: 'Jimi Hendrix' },
+                { id: 3, title: 'Sugar Street', artist: 'Andy Narell '}
+            ]
+        });
+        var grid = new Grid({
+            cacheClass: Cache,
+            store: store,
+            structure: [
+                { id: 'c1', field: 'id', name: 'Id', width: "40px" },
+                { id: 'c2', field: 'title', name: 'Title' },
+                { id: 'c3', field: 'artist', name: 'Artist' }
+            ],
+            modules: [ Sort, ColumnResizer, Filter, FilterBar ]
+        });
+        grid.placeAt("gridNode");
+
+        window.grid = grid;
+
+        grid.startup();
+    });
+  </script>
+
+</body>
+</html>
