@@ -9,6 +9,8 @@ Download http://download.dojotoolkit.org/release-1.13.0/dojo-release-1.13.0.zip
 Unpack to project root:
 * dijit
 * dojo
+* dojox
+* gridx
 * themes
 
 # Tutorials
@@ -30,7 +32,7 @@ Unpack to project root:
 * https://dojotoolkit.org/reference-guide/1.10/dojox/grid/DataGrid.html
 * https://dojotoolkit.org/reference-guide/1.10/dojo/Stateful.html
 
-# DijitTree
+# dijit/Tree
 
 * https://dojotoolkit.org/reference-guide/1.10/dijit/Tree.html
 * https://dojotoolkit.org/reference-guide/1.10/dijit/tree/ObjectStoreModel.html
