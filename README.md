@@ -39,8 +39,8 @@ Unpack to project root:
 
 # GridX
 
-https://github.com/oria/gridx/wiki/Introduction-to-Gridx
-https://xcellerant.net/2014/12/10/gridx-in-xpages-16-advanced-searching-with-the-filterbar-module/
+* https://github.com/oria/gridx/wiki/Introduction-to-Gridx
+* https://xcellerant.net/2014/12/10/gridx-in-xpages-16-advanced-searching-with-the-filterbar-module/
 
 ## Filter widgets in header
 
