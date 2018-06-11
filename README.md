@@ -42,6 +42,9 @@ Unpack to project root:
 * https://github.com/oria/gridx/wiki/Introduction-to-Gridx
 * https://xcellerant.net/2014/12/10/gridx-in-xpages-16-advanced-searching-with-the-filterbar-module/
 
-## Filter widgets in header
+## Ideas
 
-use?: http://oria.github.io/gridx/apidoc/index.html#1.2/gridx/modules/HeaderMenu
+* Filter widgets in header
+    * use?: http://oria.github.io/gridx/apidoc/index.html#1.2/gridx/modules/HeaderMenu
+* Autosize column on double click
+* Autosize columns to fit grid width on column resize (justify)
