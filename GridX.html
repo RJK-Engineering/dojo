@@ -4,12 +4,14 @@
   <meta charset="utf-8">
   <title>GridX Example</title>
   <link rel="stylesheet" href="dijit/themes/claro/claro.css" />
+  <link rel="stylesheet" href="dijit/themes/claro/document.css" />
   <link rel="stylesheet" href="gridx/resources/claro/Gridx.css" />
 </head>
+
 <body class="claro">
 
-  <div id="gridNode" style="width: 400px; height: 300px;"></div>
-  <!-- <div id="gridNode" style="width: 100%; height: 100%;"></div> -->
+  <!-- <div id="gridNode" style="width: 400px; height: 300px;"></div> -->
+  <div id="gridNode" style="width: 100%; height: 100%;"></div>
 
   <script src="dojo/dojo.js" data-dojo-config="async: true"></script>
   <script>
@@ -41,6 +43,9 @@
             modules: [ Sort, ColumnResizer, Filter, FilterBar ]
         });
         grid.placeAt("gridNode");
+
+        // modules can be directly accessed through the grid object:
+        grid.columnResizer.setWidth('c1', 10);
 
         window.grid = grid;
 
