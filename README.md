@@ -41,6 +41,7 @@ Unpack to project root:
 
 * https://github.com/oria/gridx/wiki/Introduction-to-Gridx
 * https://xcellerant.net/2014/12/10/gridx-in-xpages-16-advanced-searching-with-the-filterbar-module/
+* https://oria.github.io/gridx/gridx/tests/demo/playground.html
 
 ## Ideas
 
