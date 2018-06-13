@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>&lt;details&gt;</title>
+</head>
+<body>
+    <script src="dojo/dojo.js" data-dojo-config="async: true"></script>
+    <script>
+    require(["rjk/markdown"]);
+    </script>
+
+  <details open>
+  <summary>View contents</summary>
+<div class="markdown">
+
+* [How can you avoid callback hells?](#how-can-you-avoid-callback-hells)
+* [NodeJS often uses a callback pattern where if an error is encountered during execution, this error is passed as the first argument to the callback. What are the advantages of this pattern?](#nodejs-often-uses-a-callback-pattern-where-if-an-error-is-encountered-during-execution-this-error-is-passed-as-the-first-argument-to-the-callback-what-are-the-advantages-of-this-pattern)
+* [What is the event loop in Node.js?](#what-is-the-event-loop-in-nodejs)
+* [What is REST?](#what-is-rest)
+
+Options | Description
+------- | -----------
+-r | Recursively add subdirectories.
+-s -shuffle | Shuffle.
+-a -append | Append to existing playlist.
+-l -list [path] | Path to Total Commander file list.
+-t -target [path] | Path to target.
+-e -extensions [string] | List of extensions to include, regular expressions seperated by "\|".
+-i -incl-extensions [string] | List of extensions to include, regular expressions seperated by "\|". Appended to default list of extensions.
+-f -filter [string] | Regular expression for filenames to include.
+-m -min-size [string] | Minimum file size.
+-x -max-size [string] | Maximum file size.
+-gbs -group-by-size [string] | Group by size, optional maximum deviation in bytes.
+-gbl -group-by-length [string] | Group by length, optional maximum deviation in seconds.
+-v -verbose | Be verbose.
+-q -quiet | Be quiet.
+-debug | Display debug information.
+-h -? -help | Help.
+</div>
+  </details>
+
+</body>
+</html>
