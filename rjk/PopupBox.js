@@ -40,7 +40,7 @@ define([
         templateString: '<div><div class="rjk_PopupBox_messageContainer"></div></div>',
 
 
-        buildRendering: function(){
+        buildRendering: function() {
             this.inherited(arguments);
             this._setupIconNode();
             this._setupPopupNode();
@@ -70,7 +70,7 @@ define([
             this.refeshIcon();
         },
 
-        _setupIconNode() {
+        _setupIconNode: function() {
             var size = this.iconSize * 2;
             this.iconNode = constr.create("div", {
                 style: {
@@ -110,13 +110,13 @@ define([
             on(this.domNode, mouse.leave, lang.hitch(this, "hide"));
         },
 
-        message: function (text) {
+        message: function(text) {
             this.store.put(
-                { "text":text }
+                { "text": text }
             );
         },
 
-        addMessage: function (message) {
+        addMessage: function(message) {
             var node = constr.toDom(
                 '<div class="rjk_PopupBox_message" style="overflow: hidden">' +
                 message.text + "<hr></div>"
@@ -143,7 +143,7 @@ define([
             this.show(this.timeout);
         },
 
-        show: function (timeout) {
+        show: function(timeout) {
             clearTimeout(this.hideTimer);
 
             bfx.animateProperty({
@@ -161,7 +161,7 @@ define([
                 }), timeout + this.showDuration);
         },
 
-        hide: function () {
+        hide: function() {
             bfx.animateProperty({
                 node: this.domNode,
                 properties: {
@@ -172,7 +172,7 @@ define([
             }).play();
         },
 
-        refeshIcon() {
+        refeshIcon: function() {
             style.set(this.iconNode, {
                 display: this.messageContainerNode.children.length == 0 ? "none" : "inline-block"
             });
